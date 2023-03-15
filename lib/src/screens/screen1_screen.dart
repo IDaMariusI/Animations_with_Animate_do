@@ -1,3 +1,4 @@
+import 'package:animate_do_app/src/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -18,7 +19,14 @@ class Screen1Screen extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: const FaIcon(FontAwesomeIcons.twitter),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const TwitterScreen(),
+                ),
+              );
+            },
           ),
           SlideInLeft(
             from: 100,
