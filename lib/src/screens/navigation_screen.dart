@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -30,11 +31,17 @@ class FloatingButton extends StatelessWidget {
     return FloatingActionButton(
       backgroundColor: Colors.pink,
       onPressed: () {
-        int newNumber =
-            Provider.of<_NotificationModel>(context, listen: false).number;
+        final notiModel =
+            Provider.of<_NotificationModel>(context, listen: false);
+
+        int newNumber = notiModel.number;
         newNumber++;
-        Provider.of<_NotificationModel>(context, listen: false).number =
-            newNumber;
+        notiModel.number = newNumber;
+
+        if (newNumber >= 2) {
+          final controller = notiModel.bounceController;
+          controller.forward(from: 0.0);
+        }
       },
       child: const FaIcon(FontAwesomeIcons.play),
     );
@@ -65,20 +72,29 @@ class BottomNavigation extends StatelessWidget {
               Positioned(
                 top: 0.0,
                 right: 0.0,
-                // child: Icon(Icons.brightness_1, size: 8, color: Colors.redAccent),
-                child: Container(
-                  alignment: Alignment.center,
-                  height: 12,
-                  width: 12,
-                  decoration: const BoxDecoration(
-                    color: Colors.redAccent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '$notificationNumber',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 7,
+                child: BounceInDown(
+                  animate: (notificationNumber > 0) ? true : false,
+                  from: 10,
+                  child: Bounce(
+                    controller: (controller) =>
+                        Provider.of<_NotificationModel>(context)
+                            .bounceController = controller,
+                    from: 10,
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 12,
+                      width: 12,
+                      decoration: const BoxDecoration(
+                        color: Colors.redAccent,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '$notificationNumber',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 7,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -97,11 +113,17 @@ class BottomNavigation extends StatelessWidget {
 
 class _NotificationModel extends ChangeNotifier {
   int _number = 0;
+  late AnimationController _bounceController;
 
   int get number => _number;
-
   set number(int value) {
     _number = value;
+    notifyListeners();
+  }
+
+  AnimationController get bounceController => _bounceController;
+  set bounceController(AnimationController controller) {
+    _bounceController = controller;
     notifyListeners();
   }
 }
