@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class NavigationScreen extends StatelessWidget {
   const NavigationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.pink,
-        title: const Text('Navigation Screen'),
+    return ChangeNotifierProvider(
+      create: (_) => _NotificationModel(),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.pink,
+          title: const Text('Navigation Screen'),
+        ),
+        floatingActionButton: const FloatingButton(),
+        bottomNavigationBar: const BottomNavigation(),
       ),
-      floatingActionButton: const FloatingButton(),
-      bottomNavigationBar: const BottomNavigation(),
     );
   }
 }
@@ -25,7 +29,13 @@ class FloatingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       backgroundColor: Colors.pink,
-      onPressed: () {},
+      onPressed: () {
+        int newNumber =
+            Provider.of<_NotificationModel>(context, listen: false).number;
+        newNumber++;
+        Provider.of<_NotificationModel>(context, listen: false).number =
+            newNumber;
+      },
       child: const FaIcon(FontAwesomeIcons.play),
     );
   }
@@ -36,6 +46,9 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int notificationNumber =
+        Provider.of<_NotificationModel>(context).number;
+
     return BottomNavigationBar(
       currentIndex: 0,
       selectedItemColor: Colors.pink,
@@ -61,9 +74,9 @@ class BottomNavigation extends StatelessWidget {
                     color: Colors.redAccent,
                     shape: BoxShape.circle,
                   ),
-                  child: const Text(
-                    '1',
-                    style: TextStyle(
+                  child: Text(
+                    '$notificationNumber',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 7,
                     ),
@@ -79,5 +92,16 @@ class BottomNavigation extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _NotificationModel extends ChangeNotifier {
+  int _number = 0;
+
+  int get number => _number;
+
+  set number(int value) {
+    _number = value;
+    notifyListeners();
   }
 }
