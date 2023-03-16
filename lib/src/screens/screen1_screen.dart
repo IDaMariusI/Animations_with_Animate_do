@@ -46,7 +46,14 @@ class Screen1Screen extends StatelessWidget {
       ),
       floatingActionButton: ElasticInRight(
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => const NavigationScreen(),
+              ),
+            );
+          },
           child: const FaIcon(FontAwesomeIcons.play),
         ),
       ),
